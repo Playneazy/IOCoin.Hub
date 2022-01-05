@@ -4,6 +4,8 @@
 
 A strongly typed headless RPC daemon wrapper for I/O Coin.
 
+Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
+
 ### Features:
 
 - Seperate RPC wrapper (IOCoin.Headless) from Wallet functionality (IOCoin.Hub).
