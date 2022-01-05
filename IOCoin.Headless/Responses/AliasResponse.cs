@@ -1,4 +1,4 @@
-﻿using IOCoin.Headless.Processes.Interfaces;
+﻿using IOCoin.Headless.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

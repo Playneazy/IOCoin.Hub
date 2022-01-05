@@ -1,4 +1,5 @@
-﻿using IOCoin.Headless.Helpers;
+﻿using IOCoin.Headless.Events;
+using IOCoin.Headless.Helpers;
 using Serilog;
 using System;
 using System.Collections.Generic;

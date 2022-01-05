@@ -9,6 +9,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using IOCoin.Wallet;
+using IOCoin.Headless.Events;
 
 namespace IOCoin.Console
 {

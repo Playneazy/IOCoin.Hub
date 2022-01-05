@@ -1,11 +1,11 @@
-﻿using IOCoin.Headless.Processes.Interfaces;
+﻿using IOCoin.Headless.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IOCoin.Headless.Helpers
+namespace IOCoin.Headless.Events
 {
     public class WalletUpdateEventArgs
     {

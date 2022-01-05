@@ -1,4 +1,5 @@
-﻿using IOCoin.Headless.Helpers;
+﻿using IOCoin.Headless.Events;
+using IOCoin.Headless.Helpers;
 using IOCoin.Headless.Responses;
 using Newtonsoft.Json;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IOCoin.Headless.Processes.Interfaces
+namespace IOCoin.Headless.Interfaces
 {
     public interface IWallet
     {

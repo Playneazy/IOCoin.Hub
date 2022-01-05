@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IOCoin.Headless.Processes.Interfaces
+namespace IOCoin.Headless.Interfaces
 {
     public interface IProcess
     {

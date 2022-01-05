@@ -1,4 +1,4 @@
-﻿using IOCoin.Headless.Processes.Interfaces;
+﻿using IOCoin.Headless.Interfaces;
 using IOCoin.Headless.Responses.RPC;
 using System;
 using System.Collections.Generic;

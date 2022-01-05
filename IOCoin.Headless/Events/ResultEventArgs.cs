@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IOCoin.Headless.Helpers
+namespace IOCoin.Headless.Events
 {
     public class ResultEventArgs<ResultType>
     {

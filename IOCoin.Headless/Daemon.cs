@@ -18,7 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using IOCoin.Headless.Processes.Interfaces;
+using IOCoin.Headless.Interfaces;
 
 namespace IOCoin.Headless
 {

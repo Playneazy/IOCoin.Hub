@@ -1,5 +1,5 @@
 ﻿using IOCoin.Headless.Helpers;
-using IOCoin.Headless.Processes.Interfaces;
+using IOCoin.Headless.Interfaces;
 using IOCoin.Headless.Responses;
 using Newtonsoft.Json;
 using System.Collections.Generic;
