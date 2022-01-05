@@ -53,7 +53,7 @@ Just type the command in at the command prompt after executing the application.
 
 The IOCoin.Console provides basic implementation of functionality. Please walk yourself through that as a guide.
 
-##### How it works:
+### How it works:
 
 1. Create instance of Daemon. The Daemon instance reads from 'Headless.Config' to load required settings. This is where multi-wallet support will start when implemented.
   
@@ -84,7 +84,9 @@ Headless.Config example:
 </configuration>
 ```
 
-##### Creating a new Daemon Process:
+### 
+
+### Creating a new Daemon Process:
 
 You start with a 'Daemon' instance from IOCoin.Headless and feed in a wallet instance of IWallet type.
 
@@ -96,7 +98,7 @@ LoadSettings();
 
 The Daemon instance will load settings from Headless.config and make sure some other things are taken care of. As an example we can then call a local LoadSettings(), which loads application settings that piggy back off Headless.Config as shown in IOCoin.Console's Main program.
 
-##### Creating a new Process Response:
+### Creating a new Process Request:
 
 Processes have everything they need from the Daemon instance. Here's an example of some processes being called after the Daemon instance has been created.
 
