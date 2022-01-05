@@ -84,8 +84,6 @@ Headless.Config example:
 </configuration>
 ```
 
-### 
-
 ### Creating a new Daemon Process:
 
 You start with a 'Daemon' instance from IOCoin.Headless and feed in a wallet instance of IWallet type.
