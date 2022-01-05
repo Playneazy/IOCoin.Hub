@@ -6,6 +6,7 @@ A strongly typed headless RPC daemon wrapper for I/O Coin.
 
 Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
 
+
 ### Features:
 
 - Seperate RPC wrapper (IOCoin.Headless) from Wallet functionality (IOCoin.Console).
@@ -32,6 +33,7 @@ Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
 - Known transaction fee's are built into each process. Data fee's, a base price per kb is provided.
   
 
+
 ### Future Upgrades:
 
 - Multiple IOC Wallet support.
@@ -42,6 +44,7 @@ Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
   
 - DVM (End of Jan '22')
   
+
 
 ### Primary Console Commands:
 
@@ -54,6 +57,7 @@ Just type the command in at the command prompt after executing the application.
 | unlock | Does the same as 'stake' but unlocks the wallet for other functionality. |
 | exit | Shuts down the daemon and closes the application. |
 | **"command"** | Execute any existing daemon command as normal and get the JSON RPC response. |
+
 
 ## Getting Started:
 
@@ -89,6 +93,7 @@ Headless.Config example:
 	</appSettings>
 </configuration>
 ```
+
 
 ### Creating a new Daemon Process:
 
