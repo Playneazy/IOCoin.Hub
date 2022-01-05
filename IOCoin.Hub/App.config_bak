@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<startup>
+		<supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />
+	</startup>
+	<appSettings> 
+		<add key="daemonpath" value="C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe" />
+		<add key="appdatadir" value="C:\Users\k\Documents\IOC\IOC_Test_Wallet" />  <!-- Important '\' at end of string-->
+		<add key="configfilepath" value="" />
+		<add key="walletpassphrase" value="testpassphrase" />
+		<add key="notificationaddress" value="http://localhost:8000/" /> <!-- Important '/' at end of string-->
+
+		<add key="addnodes" value="amer.supernode.iocoin.io,emea.supernode.iocoin.io,apac.supernode.iocoin.io" />
+
+	</appSettings>
+</configuration>
