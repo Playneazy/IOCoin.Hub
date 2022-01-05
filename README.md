@@ -36,6 +36,10 @@ A strongly typed headless RPC daemon wrapper for I/O Coin.
   
 - Calculate dynamic fee's on data transactions.
   
+- More daemon and wallet functionality...
+  
+- DVM (End of Jan '22')
+  
 
 ### Primary Console Commands:
 
