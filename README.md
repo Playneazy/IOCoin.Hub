@@ -8,7 +8,7 @@ Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
 
 ### Features:
 
-- Seperate RPC wrapper (IOCoin.Headless) from Wallet functionality (IOCoin.Hub).
+- Seperate RPC wrapper (IOCoin.Headless) from Wallet functionality (IOCoin.Console).
   
 - 'Headlesss.config' manages all initialization parameters.
   
