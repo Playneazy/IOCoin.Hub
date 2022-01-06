@@ -11,14 +11,17 @@ using System.Text;
 using System.Threading.Tasks;
 using IOCoin.Wallet;
 using IOCoin.Headless.Events;
+using System.IO;
 
 namespace IOCoin.Console
 {
     public static class CommandLine
     {
         private static string walletName { get; set; }
+        private static Settings settings { get; set; }
         public static async Task ReadLoop(Daemon Daemon, Info wallet, string[] args)
         {
+
             while (true)
             {
                 ConsoleWriter.Normal("Enter a command or <ENTER> to show update: ");
@@ -70,7 +73,6 @@ namespace IOCoin.Console
                 }
                 else
                 {
-
                     // Functions
                     switch (command)
                     {
@@ -102,9 +104,8 @@ namespace IOCoin.Console
                                 // 1.) Initialize Daemon and Console settings
                                 ConsoleWriter.Info($"Initializing daemon and files...");
                                 Daemon = new Daemon(wallet, walletName);
-                                // TODO: Write a method to load console settings from JSON
-                                //LoadSettings();     
-                                // TODO: Load the interval for the TimedUpdates in step 3
+
+                                settings = await Daemon?.LoadSettings<Settings>(Directory.GetCurrentDirectory() + "\\Console.json");
 
                                 // 2.) Setup webserver for Block and Wallet Notifications from Daemon
                                 WebServer ws = new WebServer(Daemon.settings(walletName));
@@ -112,7 +113,7 @@ namespace IOCoin.Console
                                 ws.WalletNotification += c_WalletNotification;
 
                                 // 3.) Start Update Timer
-                                //TimedUpdates.Start(useWallet, wallet, Daemon);
+                                TimedUpdates.Start(settings, wallet, Daemon, walletName);
 
                                 ConsoleWriter.Response($"Daemon initialized.");
 

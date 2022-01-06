@@ -32,6 +32,8 @@ namespace IOCoin.Headless
 
         private Settings setting { get; set; } 
 
+        public string WalletsPath { get; set; }
+
         public StartDaemon DaemonProcess { get; set; }
 
         public Daemon(IWallet wallet, string walletName)
@@ -40,15 +42,15 @@ namespace IOCoin.Headless
             SetupStaticLogger();
 
             // Setup multi-wallet
-            var walletsPath = Directory.GetCurrentDirectory() + "\\Wallets.json";
-            if (!File.Exists(walletsPath))
+            WalletsPath = Directory.GetCurrentDirectory() + "\\Wallets.json";
+            if (!File.Exists(WalletsPath))
             {
-                Log.Error("Could not find wallets file: " + walletsPath);
+                Log.Error("Could not find wallets file: " + WalletsPath);
                 return;
             }
             try
             {
-                var fullConfig = File.ReadAllText(walletsPath).Replace(@"\", @"\\");
+                var fullConfig = File.ReadAllText(WalletsPath).Replace(@"\", @"\\");
             
                 wallets = JsonConvert.DeserializeObject<List<Settings>>(fullConfig);
             }
@@ -75,6 +77,33 @@ namespace IOCoin.Headless
                 .CreateLogger();
         }
 
+
+        public async Task SaveSettings()
+        {
+            string walletJson = JsonConvert.SerializeObject(wallets, Formatting.Indented);
+            await File.WriteAllTextAsync(WalletsPath, walletJson);
+        }
+        public async Task<JsonObjType> LoadSettings<JsonObjType>(string filePath)
+        {
+            
+            if (!File.Exists(filePath))
+            {
+                Log.Error("Could not find file: " + filePath);
+                return default;
+            }
+            try
+            {
+                var fullConfig = await File.ReadAllTextAsync(filePath);
+                fullConfig = fullConfig.Replace(@"\", @"\\");
+
+                return JsonConvert.DeserializeObject<JsonObjType>(fullConfig);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error Loading File: " + ex.Message);
+                return default;
+            }
+        }
 
         public async Task InitDaemon(Settings settings)
         {

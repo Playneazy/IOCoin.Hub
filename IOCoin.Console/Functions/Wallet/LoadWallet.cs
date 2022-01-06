@@ -38,8 +38,7 @@ namespace IOCoin.Console.Functions.Wallet
                 Daemon.settings(walletName).rpcUser = "iocoinrpc";
                 Daemon.settings(walletName).rpcPassword = GetRandomPassword.Generate(44);
 
-                //TODO: write a method to save the JSON settings
-                //Daemon.settings(walletName).AddOrUpdateSettings("configfilepath", dh.FormatDirPath() + "iocoin.conf");
+                await Daemon.SaveSettings();
                 await WriteConfigFile(); // Save a default iocoin.conf file with nodes
             }
 
