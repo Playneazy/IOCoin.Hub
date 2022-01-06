@@ -61,7 +61,7 @@ The IOCoin.Console provides basic implementation of functionality. Please walk y
 
 ### How it works:
 
-1. Create instance of Daemon. The Daemon instance reads from 'Headless.Config' to load required settings. This is where multi-wallet support will start when implemented.
+1. Create instance of Daemon. The Daemon instance reads from 'Wallets.json' to load required settings. This is where multi-wallet support is implemented.
   
 2. Create an instance of WebServer in the IOCoin.Headless project. This exposes Block and Wallet notification events for subscription.
   
