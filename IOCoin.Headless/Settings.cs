@@ -9,7 +9,7 @@ namespace IOCoin.Headless
 {
     public class Settings
     {
-        [JsonProperty]
+        [JsonProperty("configname")]
         public string WalletName { get; set; }
         [JsonProperty]
         public string daemonPath { get; set; }

@@ -46,9 +46,10 @@ namespace IOCoin.Headless
                 Log.Error("Could not find wallets file: " + walletsPath);
                 return;
             }
-            var fullConfig = File.ReadAllText(walletsPath).Replace(@"\", @"\\");
             try
             {
+                var fullConfig = File.ReadAllText(walletsPath).Replace(@"\", @"\\");
+            
                 wallets = JsonConvert.DeserializeObject<List<Settings>>(fullConfig);
             }
             catch (Exception ex)
@@ -56,6 +57,7 @@ namespace IOCoin.Headless
                 Log.Error("Error Loading Wallets: " + ex.Message);
             }
 
+            daemonHelpers = new DaemonHelpers(settings(walletName).appDataDir);
 
             DaemonProcess = new StartDaemon(settings(walletName), wallet);
 

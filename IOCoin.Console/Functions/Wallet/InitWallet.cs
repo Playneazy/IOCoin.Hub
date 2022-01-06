@@ -14,12 +14,12 @@ namespace IOCoin.Console.Functions.Wallet
 {
     public class InitWallet
     {
-        public async Task Run(Daemon Daemon, Info wallet)
+        public async Task Run(Daemon Daemon, Info wallet, string walletName)
         {
             ConsoleWriter.Info($"Initializing wallet...");
-            await new LoadWallet().Run(Daemon, wallet);
+            await new LoadWallet().Run(Daemon, wallet, walletName);
             wallet.isWalletInitialized = true;
-            ConsoleWriter.Response($"Wallet Initialized.");
+            ConsoleWriter.Response($"Wallet [{walletName}] initialized.");
         }
     }
 }

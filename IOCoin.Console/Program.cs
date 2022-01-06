@@ -23,7 +23,7 @@ namespace IOCoin.Console
         //TODO: Enable logging by running file
         static async Task Main(string[] args)
         {          
-
+            //TODO: Put Try Catch blocks around file handling
             //############################
             // 4.) Listen for commands ###
             //############################

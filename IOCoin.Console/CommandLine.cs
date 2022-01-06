@@ -24,19 +24,25 @@ namespace IOCoin.Console
                 ConsoleWriter.Normal("Enter a command or <ENTER> to show update: ");
 
                 var cmd = System.Console.ReadLine();
-                // Calls to Processes
-                if (cmd.StartsWith("-"))
+                string command = string.Empty;
+                IEnumerable<string> cmdArgs = null;
+                if (cmd.Contains(" "))
                 {
-                    cmd = cmd.Substring(1);
-                    string command = string.Empty;
-                    IEnumerable<string> cmdArgs = null;
-                    if (cmd.Contains(" "))
-                    {
-                        command = cmd.Split(' ').First();
-                    } else
-                    {
-                        command = cmd;
-                    }
+                    command = cmd.Split(' ').First();
+                    cmdArgs = cmd.Split(' ').Skip(0);
+                }
+                else
+                {
+                    command = cmd;
+                }
+
+
+
+                // Calls to Processes
+                if (command.StartsWith("-"))
+                {
+                    command = cmd.Substring(1);
+                    
   
                     switch (command)
                     {
@@ -58,27 +64,6 @@ namespace IOCoin.Console
                         case "stakinginfo":
                             var stakeInfo = await new GetStakingInfo(Daemon.settings(walletName), wallet).Run();
                             break;
-                        case "loadwallet":
-                            walletName = cmdArgs?.ElementAt(1);
-                            if (string.IsNullOrEmpty(walletName))
-                            {
-                                // 1.) Initialize Daemon and Console settings
-                                ConsoleWriter.Info($"Initializing daemon and files...");
-                                Daemon = new Daemon(wallet, walletName);
-                                // TODO: Write a method to load console settings from JSON
-                                //LoadSettings();     
-                                // TODO: Load the interval for the TimedUpdates in step 3
-
-                                // 2.) Setup webserver for Block and Wallet Notifications from Daemon
-                                WebServer ws = new WebServer(Daemon.settings(walletName));
-                                ws.BlockNotification += c_BlockNotification;
-                                ws.WalletNotification += c_WalletNotification;
-
-                                // 3.) Start Update Timer
-                                //TimedUpdates.Start(useWallet, wallet, Daemon);
-
-                            }
-                            break;
                         default:
                             break;
                     }
@@ -87,13 +72,10 @@ namespace IOCoin.Console
                 {
 
                     // Functions
-                    switch (cmd)
+                    switch (command)
                     {
                         case "exit":
                             await new Exit().Run(Daemon, wallet, walletName);
-                            break;
-                        case "initwallet":
-                            await new InitWallet().Run(Daemon, wallet);
                             break;
                         case "unlock":
                             await new StakeWallet().Run(Daemon, wallet, false, walletName);
@@ -113,6 +95,33 @@ namespace IOCoin.Console
                                 ConsoleWriter.Response($"Balance: {getInfoProc.Rpc.Result?.Balance}, [{syncStats.BlockCount}/{syncStats.BlockCountOfPeers}] ({syncStats.Difference})");
                             }
                             break;
+                        case "loadwallet":
+                            walletName = cmdArgs?.ElementAt(1);
+                            if (!string.IsNullOrEmpty(walletName))
+                            {
+                                // 1.) Initialize Daemon and Console settings
+                                ConsoleWriter.Info($"Initializing daemon and files...");
+                                Daemon = new Daemon(wallet, walletName);
+                                // TODO: Write a method to load console settings from JSON
+                                //LoadSettings();     
+                                // TODO: Load the interval for the TimedUpdates in step 3
+
+                                // 2.) Setup webserver for Block and Wallet Notifications from Daemon
+                                WebServer ws = new WebServer(Daemon.settings(walletName));
+                                ws.BlockNotification += c_BlockNotification;
+                                ws.WalletNotification += c_WalletNotification;
+
+                                // 3.) Start Update Timer
+                                //TimedUpdates.Start(useWallet, wallet, Daemon);
+
+                                ConsoleWriter.Response($"Daemon initialized.");
+
+                                // 4.) Initalize the wallet
+                                await new InitWallet().Run(Daemon, wallet, walletName);
+
+                            }
+                            break;
+
                         default:
                             if (!string.IsNullOrEmpty(cmd))
                             {
