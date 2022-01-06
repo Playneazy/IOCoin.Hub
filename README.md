@@ -119,6 +119,65 @@ LoadSettings();
 
 The Daemon instance will load settings from Headless.config and make sure some other things are taken care of. As an example we can then call a local LoadSettings(), which loads application settings that piggy back off Headless.Config as shown in IOCoin.Console's Main program.
 
+### Tieing in a wallet object:
+
+The following snippet shows the 'Info' class inside IOCoin.Wallet being referenced in the main Console program.
+
+```csharp
+ internal class Program
+    {
+
+        static Daemon Daemon { get; set; }
+        static Settings settings { get; set; } = new Settings();
+        static Info Wallet { get; set; } = new Info();
+```
+
+There's a WalletBase setup to inherit the base requirements for IWallet from IOCHeadless.
+
+```csharp
+public class WalletBase : IWallet
+    {
+        public delegate void WalletUpdateEventHandler(object sender, WalletUpdateEventArgs e);
+        public virtual void Update(WalletUpdateEventArgs e)
+        {
+            WalletUpdateEventHandler handler = WalletUpdate;
+            handler?.Invoke(this, e);
+        }
+        public event WalletUpdateEventHandler WalletUpdate;
+```
+
+Then inside the Info class we include a few Console level variables we'd like to include.
+
+```csharp
+public class Info : WalletBase
+    {
+        // Console app variables
+        [JsonProperty]
+        public bool isSynced { get; set; }
+        [JsonProperty]
+        public bool isWalletInitialized { get; set; }
+
+    }
+```
+
+We can then pass the Info class (wallet implementation) to the Daemon process.
+
+```csharp
+public static async Task ReadLoop(Daemon Daemon, Info wallet, string[] args)        
+{
+
+...
+
+
+case "loadwallet":
+     walletName = cmdArgs?.ElementAt(1);
+     if (!string.IsNullOrEmpty(walletName))
+       {
+         // 1.) Initialize Daemon and Console settings
+         ConsoleWriter.Info($"Initializing daemon and files...");
+         Daemon = new Daemon(wallet, walletName);
+```
+
 ### Creating a new Process Request:
 
 Processes have everything they need from the Daemon instance. Here's an example of some processes being called after the Daemon instance has been created.
