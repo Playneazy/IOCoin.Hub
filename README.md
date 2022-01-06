@@ -8,7 +8,7 @@ Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
 
 ### Features:
 
-- Seperate RPC wrapper (IOCoin.Headless) from Wallet functionality (IOCoin.Hub).
+- Seperate RPC wrapper (IOCoin.Headless) from Wallet functionality (IOCoin.Console).
   
 - 'Headlesss.config' manages all initialization parameters.
   
@@ -31,11 +31,11 @@ Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
   
 - Known transaction fee's are built into each process. Data fee's, a base price per kb is provided.
   
+- Supports multiple wallets through a 'Wallets.json' file. Each can be referenced using the 'loadwallet [name]' at the console.
+  
 
 ### Future Upgrades:
 
-- Multiple IOC Wallet support.
-  
 - Calculate dynamic fee's on data transactions.
   
 - More daemon and wallet functionality...
@@ -49,7 +49,7 @@ Just type the command in at the command prompt after executing the application.
 
 | Command | Desription |
 | --- | --- |
-| initwallet | Initializes the wallet using 'Headless.Config' settings and waits until there is a valid connection established via 'getinfo' to the daemon. Most work here deals with getting the daemon setup and running. |
+| loadwallet walletname | Initializes the wallet settings from the Wallets.json file, checks the daemon files and starts it accordingly, then runs a GetInfo until successfully connected. If a different RPC is detected, it will try and Kill existing iocoind process in order to restart using the correct RPC auth for the selected wallet. |
 | stake | Executes a series of commands to ensure staking only is enabled. This will set encryption if not set, unlock the wallet if not unlocked already, and checks 'getstakinginfo' to ensure staking is enabled. |
 | unlock | Does the same as 'stake' but unlocks the wallet for other functionality. |
 | exit | Shuts down the daemon and closes the application. |
@@ -59,35 +59,52 @@ Just type the command in at the command prompt after executing the application.
 
 The IOCoin.Console provides basic implementation of functionality. Please walk yourself through that as a guide.
 
-### How it works:
+### How it works:
 
-1. Create instance of Daemon. The Daemon instance reads from 'Headless.Config' to load required settings. This is where multi-wallet support will start when implemented.
+1. Create instance of Daemon. The Daemon instance reads from 'Wallets.json' to load required settings. This is where multi-wallet support is implemented.
   
 2. Create an instance of WebServer in the IOCoin.Headless project. This exposes Block and Wallet notification events for subscription.
   
 3. Execute Processes. All processes inherit from IProcess in IOCoin.Headless.
   
 
-Headless.Config example:
+#### Wallets.json example
 
-```xml
-<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-	<startup>
-		<supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />
-	</startup>
-	<appSettings> 
-		<add key="daemonpath" value="C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe" />
-		<add key="appdatadir" value="C:\Users\k\Documents\IOC\IOC_Test_Wallet" /> 
-		<add key="configfilepath" value="C:\Users\k\Documents\IOC\IOC_Test_Wallet\iocoin.conf" />
-		<add key="walletpassphrase" value="passphrase" />
-		<add key="notificationaddress" value="http://localhost:8000/" />
+You can setup the initialization parameters for multiple wallets. Each are referenced in the console as 'loadwallet [configname]'. Alternatively a [configname] can be input as the Daemon process is initialized in C#. This allows for easy and quick switching between wallets at any time by executing the following commands:
 
-		<add key="addnodes" value="amer.supernode.iocoin.io,emea.supernode.iocoin.io,apac.supernode.iocoin.io" />
-		<add key="updateintervalMin" value="5" />
+> stop
+> 
+> loadwallet [configname]
 
-	</appSettings>
-</configuration>
+```json
+[
+  {
+    "configname": "testwallet",
+    "daemonpath": "C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe",
+    "appdatadir": "C:\Users\k\Documents\IOC\IOC_Test_Wallet",
+    "configfilepath": "C:\Users\k\Documents\IOC\IOC_Test_Wallet\iocoin.conf",
+    "walletpassphrase": "passphrase1",
+    "notificationaddress": "http://localhost:8000/",
+    "initnodes": [
+      "amer.supernode.iocoin.io",
+      "emea.supernode.iocoin.io",
+      "apac.supernode.iocoin.io"
+     ]
+  },
+  {
+    "configname": "main",
+    "daemonpath": "C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe",
+    "appdatadir": "C:\Users\k\Documents\IOC\IOC",
+    "configfilepath": "C:\Users\k\Documents\IOC\IOC\iocoin.conf",
+    "walletpassphrase": "passphrase2",
+    "notificationaddress": "http://localhost:8000/",
+    "initnodes": [
+      "amer.supernode.iocoin.io",
+      "emea.supernode.iocoin.io",
+      "apac.supernode.iocoin.io"
+     ]
+  }
+]
 ```
 
 ### Creating a new Daemon Process:
@@ -102,7 +119,66 @@ LoadSettings();
 
 The Daemon instance will load settings from Headless.config and make sure some other things are taken care of. As an example we can then call a local LoadSettings(), which loads application settings that piggy back off Headless.Config as shown in IOCoin.Console's Main program.
 
-### Creating a new Process Request:
+### Tieing in a wallet object:
+
+The following snippet shows the 'Info' class inside IOCoin.Wallet being referenced in the main Console program.
+
+```csharp
+ internal class Program
+    {
+
+        static Daemon Daemon { get; set; }
+        static Settings settings { get; set; } = new Settings();
+        static Info Wallet { get; set; } = new Info();
+```
+
+There's a WalletBase setup to inherit the base requirements for IWallet from IOCHeadless.
+
+```csharp
+public class WalletBase : IWallet
+    {
+        public delegate void WalletUpdateEventHandler(object sender, WalletUpdateEventArgs e);
+        public virtual void Update(WalletUpdateEventArgs e)
+        {
+            WalletUpdateEventHandler handler = WalletUpdate;
+            handler?.Invoke(this, e);
+        }
+        public event WalletUpdateEventHandler WalletUpdate;
+```
+
+Then inside the Info class we include a few Console level variables we'd like to include.
+
+```csharp
+public class Info : WalletBase
+    {
+        // Console app variables
+        [JsonProperty]
+        public bool isSynced { get; set; }
+        [JsonProperty]
+        public bool isWalletInitialized { get; set; }
+
+    }
+```
+
+We can then pass the Info class (wallet implementation) to the Daemon process.
+
+```csharp
+public static async Task ReadLoop(Daemon Daemon, Info wallet, string[] args)        
+{
+
+...
+
+
+case "loadwallet":
+     walletName = cmdArgs?.ElementAt(1);
+     if (!string.IsNullOrEmpty(walletName))
+       {
+         // 1.) Initialize Daemon and Console settings
+         ConsoleWriter.Info($"Initializing daemon and files...");
+         Daemon = new Daemon(wallet, walletName);
+```
+
+### Creating a new Process Request:
 
 Processes have everything they need from the Daemon instance. Here's an example of some processes being called after the Daemon instance has been created.
 
