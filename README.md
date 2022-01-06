@@ -6,7 +6,6 @@ A strongly typed headless RPC daemon wrapper for I/O Coin.
 
 Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
 
-
 ### Features:
 
 - Seperate RPC wrapper (IOCoin.Headless) from Wallet functionality (IOCoin.Console).
@@ -32,19 +31,17 @@ Donate IOC: iqBnWoWtsTUcqucpAGN1NRtjpGyDp1ofXd
   
 - Known transaction fee's are built into each process. Data fee's, a base price per kb is provided.
   
-
+- Supports multiple wallets through a 'Wallets.json' file. Each can be referenced using the 'loadwallet [name]' at the console.
+  
 
 ### Future Upgrades:
 
-- Multiple IOC Wallet support.
-  
 - Calculate dynamic fee's on data transactions.
   
 - More daemon and wallet functionality...
   
 - DVM (End of Jan '22')
   
-
 
 ### Primary Console Commands:
 
@@ -58,12 +55,11 @@ Just type the command in at the command prompt after executing the application.
 | exit | Shuts down the daemon and closes the application. |
 | **"command"** | Execute any existing daemon command as normal and get the JSON RPC response. |
 
-
 ## Getting Started:
 
 The IOCoin.Console provides basic implementation of functionality. Please walk yourself through that as a guide.
 
-### How it works:
+### How it works:
 
 1. Create instance of Daemon. The Daemon instance reads from 'Headless.Config' to load required settings. This is where multi-wallet support will start when implemented.
   
@@ -72,28 +68,44 @@ The IOCoin.Console provides basic implementation of functionality. Please walk y
 3. Execute Processes. All processes inherit from IProcess in IOCoin.Headless.
   
 
-Headless.Config example:
+#### Wallets.json example
 
-```xml
-<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-	<startup>
-		<supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />
-	</startup>
-	<appSettings> 
-		<add key="daemonpath" value="C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe" />
-		<add key="appdatadir" value="C:\Users\k\Documents\IOC\IOC_Test_Wallet" /> 
-		<add key="configfilepath" value="C:\Users\k\Documents\IOC\IOC_Test_Wallet\iocoin.conf" />
-		<add key="walletpassphrase" value="passphrase" />
-		<add key="notificationaddress" value="http://localhost:8000/" />
+You can setup the initialization parameters for multiple wallets. Each are referenced in the console as 'loadwallet [configname]'. Alternatively a [configname] can be input as the Daemon process is initialized in C#. This allows for easy and quick switching between wallets at any time by executing the following commands:
 
-		<add key="addnodes" value="amer.supernode.iocoin.io,emea.supernode.iocoin.io,apac.supernode.iocoin.io" />
-		<add key="updateintervalMin" value="5" />
+> stop
+> 
+> loadwallet [configname]
 
-	</appSettings>
-</configuration>
+```json
+[
+  {
+    "configname": "testwallet",
+    "daemonpath": "C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe",
+    "appdatadir": "C:\Users\k\Documents\IOC\IOC_Test_Wallet",
+    "configfilepath": "C:\Users\k\Documents\IOC\IOC_Test_Wallet\iocoin.conf",
+    "walletpassphrase": "passphrase1",
+    "notificationaddress": "http://localhost:8000/",
+    "initnodes": [
+      "amer.supernode.iocoin.io",
+      "emea.supernode.iocoin.io",
+      "apac.supernode.iocoin.io"
+     ]
+  },
+  {
+    "configname": "main",
+    "daemonpath": "C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe",
+    "appdatadir": "C:\Users\k\Documents\IOC\IOC",
+    "configfilepath": "C:\Users\k\Documents\IOC\IOC\iocoin.conf",
+    "walletpassphrase": "passphrase2",
+    "notificationaddress": "http://localhost:8000/",
+    "initnodes": [
+      "amer.supernode.iocoin.io",
+      "emea.supernode.iocoin.io",
+      "apac.supernode.iocoin.io"
+     ]
+  }
+]
 ```
-
 
 ### Creating a new Daemon Process:
 
@@ -107,7 +119,7 @@ LoadSettings();
 
 The Daemon instance will load settings from Headless.config and make sure some other things are taken care of. As an example we can then call a local LoadSettings(), which loads application settings that piggy back off Headless.Config as shown in IOCoin.Console's Main program.
 
-### Creating a new Process Request:
+### Creating a new Process Request:
 
 Processes have everything they need from the Daemon instance. Here's an example of some processes being called after the Daemon instance has been created.
 
