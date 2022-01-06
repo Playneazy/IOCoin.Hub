@@ -52,7 +52,7 @@ Just type the command in at the command prompt after executing the application.
 
 | Command | Desription |
 | --- | --- |
-| initwallet | Initializes the wallet using 'Headless.Config' settings and waits until there is a valid connection established via 'getinfo' to the daemon. Most work here deals with getting the daemon setup and running. |
+| loadwallet walletname | Initializes the wallet settings from the Wallets.json file, checks the daemon files and starts it accordingly, then runs a GetInfo until successfully connected. If a different RPC is detected, it will try and Kill existing iocoind process in order to restart using the correct RPC auth for the selected wallet. |
 | stake | Executes a series of commands to ensure staking only is enabled. This will set encryption if not set, unlock the wallet if not unlocked already, and checks 'getstakinginfo' to ensure staking is enabled. |
 | unlock | Does the same as 'stake' but unlocks the wallet for other functionality. |
 | exit | Shuts down the daemon and closes the application. |
