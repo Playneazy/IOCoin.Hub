@@ -12,11 +12,11 @@ namespace IOCoin.Console.Functions
 {
     public class Exit
     {
-        public async Task Run(Daemon Daemon, Info wallet)
+        public async Task Run(Daemon Daemon, Info wallet, string walletName)
         {
             ConsoleWriter.Important($"Stopping daemon and exiting...");
 
-            await new Stop(Daemon.settings, wallet).Run();
+            await new Stop(Daemon.settings(walletName), wallet).Run();
             Environment.Exit(0);
         }
     }

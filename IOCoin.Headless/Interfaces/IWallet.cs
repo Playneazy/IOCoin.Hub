@@ -15,6 +15,8 @@ namespace IOCoin.Headless.Interfaces
         public delegate void WalletUpdateEventHandler(object sender, WalletUpdateEventArgs e);
         public void Update(WalletUpdateEventArgs e);
 
+        public string WalletName { get; set; }
+
         public bool isOnline { get; set; }
         public bool isEncrypted { get; set; }
         public bool isLocked { get; set; }

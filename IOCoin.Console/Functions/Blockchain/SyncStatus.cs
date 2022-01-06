@@ -14,13 +14,13 @@ namespace IOCoin.Console.Functions.Blockchain
 {
     public class SyncStatus
     {
-        public async Task<Logic.Results.SyncStatus> Run(Daemon Daemon, Info wallet)
+        public async Task<Logic.Results.SyncStatus> Run(Daemon Daemon, Info wallet, string walletName)
         {
-            var getBlockCount = new GetBlockCount(Daemon.settings, wallet);
+            var getBlockCount = new GetBlockCount(Daemon.settings(walletName), wallet);
             var blockCount = await getBlockCount.Run();
             wallet.BlockHeight = blockCount.Rpc.Result;
 
-            var getNumBlocksOfPeers = new GetNumBlocksOfPeers(Daemon.settings, wallet);
+            var getNumBlocksOfPeers = new GetNumBlocksOfPeers(Daemon.settings(walletName), wallet);
             var blockCountOfPeers = await getNumBlocksOfPeers.Run();
             wallet.PeerBlockCount = blockCountOfPeers.Rpc.Result;
 

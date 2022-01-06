@@ -21,6 +21,7 @@ namespace IOCoin.Wallet
         }
         public event WalletUpdateEventHandler WalletUpdate;
 
+        public string WalletName { get; set; }
 
 
         [JsonProperty]

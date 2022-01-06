@@ -25,9 +25,12 @@ namespace IOCoin.Console
         private static int runtime_timerTicks { get; set; } = 0;
         private static int update_timerTicks { get; set; } = 0;
 
+        private static string walletName { get; set; }
 
-        public static async void Start(Settings Settings, Info Wallet, Daemon daemon)
+
+        public static async void Start(Settings Settings, Info Wallet, Daemon daemon, string WalletName)
         {
+            walletName = WalletName;
             wallet = Wallet;
             Daemon = daemon;
             settings = Settings;
@@ -52,12 +55,12 @@ namespace IOCoin.Console
                 ProcessingUpdate = true;        // Makes sure another thread at a new tick doesn't execute while processing.
 
                 // Update Core Wallet Variables
-                _ = await new SyncStatus().Run(Daemon, wallet);
-                _ = await new WalletLockStatus(Daemon.settings, wallet).Run();
-                _ = await new GetStakingInfo(Daemon.settings, wallet).Run();
-                _ = await new GetInfo(Daemon.settings, wallet).Run();
-                _ = await new ListTransactions(Daemon.settings, wallet).Run();
-                _ = await new AliasList(Daemon.settings, wallet).Run();
+                _ = await new SyncStatus().Run(Daemon, wallet, walletName);
+                _ = await new WalletLockStatus(Daemon.settings(walletName), wallet).Run();
+                _ = await new GetStakingInfo(Daemon.settings(walletName), wallet).Run();
+                _ = await new GetInfo(Daemon.settings(walletName), wallet).Run();
+                _ = await new ListTransactions(Daemon.settings(walletName), wallet).Run();
+                _ = await new AliasList(Daemon.settings(walletName), wallet).Run();
 
                 // Output update
                 ConsoleWriter.Update($"Versioning: {wallet.Version} [{wallet.ProtocolVersion}] ({wallet.WalletVersion})");

@@ -15,21 +15,21 @@ namespace IOCoin.Console.Functions.Wallet
 {
     public class StakeWallet
     {
-        public async Task Run(Daemon Daemon, Info wallet, bool stakeOnly)
+        public async Task Run(Daemon Daemon, Info wallet, bool stakeOnly, string walletName)
         {
             // 1.) Check sync status
             ConsoleWriter.Info($"Checking sync status...");
-            var syncStats = await new SyncStatus().Run(Daemon, wallet);
+            var syncStats = await new SyncStatus().Run(Daemon, wallet, walletName);
 
             // 2.) Check if wallet is Encrypted
             ConsoleWriter.Info($"Checking wallet encryption...");
-            var lockStats = await new WalletLockStatus(Daemon.settings, wallet).Run();
+            var lockStats = await new WalletLockStatus(Daemon.settings(walletName), wallet).Run();
 
             if (!lockStats.Rpc.Result.isEncrypted)
             {
                 // 2a.) If not, Encrypt Wallet with passphrase
                 ConsoleWriter.Important($"No encryption found, encrypting wallet.");
-                EncryptWallet encryptWallet = new EncryptWallet(Daemon.settings, wallet);
+                EncryptWallet encryptWallet = new EncryptWallet(Daemon.settings(walletName), wallet);
                 await encryptWallet.Run();
                 lockStats.Rpc.Result.isEncrypted = true;
 
@@ -41,7 +41,7 @@ namespace IOCoin.Console.Functions.Wallet
                 ConsoleWriter.Info($"Waiting for blockchain sync...");
                 do
                 {
-                    syncStats = await new SyncStatus().Run(Daemon, wallet);
+                    syncStats = await new SyncStatus().Run(Daemon, wallet, walletName);
                     ConsoleWriter.Response($"Syncing - [{syncStats.BlockCount}/{syncStats.BlockCountOfPeers}] ({syncStats.Difference})");
 
                 } while (syncStats.Difference > 0);
@@ -58,12 +58,12 @@ namespace IOCoin.Console.Functions.Wallet
                 else
                     ConsoleWriter.Info($"Unlocking wallet...");
 
-                var walletPassPhrase = new WalletPassPhrase(Daemon.settings, wallet).Run(3155695200000, stakeOnly); // 100 years
+                var walletPassPhrase = new WalletPassPhrase(Daemon.settings(walletName), wallet).Run(3155695200000, stakeOnly); // 100 years
 
                 // 3a.) Check if Ecrypted and Unlocked again
                 do
                 {
-                    lockStats = await new WalletLockStatus(Daemon.settings, wallet).Run();
+                    lockStats = await new WalletLockStatus(Daemon.settings(walletName), wallet).Run();
                     if (lockStats.Rpc.Result.isEncrypted && !lockStats.Rpc.Result.isLocked)
                     {
                         // Daemon is Staking!
@@ -88,14 +88,14 @@ namespace IOCoin.Console.Functions.Wallet
             {
                 // 4.) Check if staking is enabled
                 ConsoleWriter.Info($"Checking if staking is enabled...");
-                var stakingStats = await new GetStakingInfo(Daemon.settings, wallet).Run();
+                var stakingStats = await new GetStakingInfo(Daemon.settings(walletName), wallet).Run();
 
                 if (stakingStats.Rpc.Result.Enabled)
                 {
                     ConsoleWriter.Response($"Staking enabled.");
                 } else
                 {
-                    await Run(Daemon, wallet, stakeOnly);
+                    await Run(Daemon, wallet, stakeOnly, walletName);
                 }
             }
             

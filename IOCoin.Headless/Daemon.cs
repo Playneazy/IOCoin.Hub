@@ -28,26 +28,41 @@ namespace IOCoin.Headless
 
         public DaemonHelpers daemonHelpers { get; set; }
 
-        public Settings settings { get; set; } 
+        public List<Settings> wallets { get; set; } = new List<Settings>();
 
+        private Settings setting { get; set; } 
 
         public StartDaemon DaemonProcess { get; set; }
 
-        public Daemon(IWallet wallet)
+        public Daemon(IWallet wallet, string walletName)
         {
 
             SetupStaticLogger();
-            var stestd = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Headless.config");
 
-            // Set the settings file to App.config since were loading from DLL
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Headless.config"));
-            settings = new Settings();
+            // Setup multi-wallet
+            var walletsPath = Directory.GetCurrentDirectory() + "\\Wallets.json";
+            if (!File.Exists(walletsPath))
+            {
+                Log.Error("Could not find wallets file: " + walletsPath);
+                return;
+            }
+            var fullConfig = File.ReadAllText(walletsPath).Replace(@"\", @"\\");
+            try
+            {
+                wallets = JsonConvert.DeserializeObject<List<Settings>>(fullConfig);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error Loading Wallets: " + ex.Message);
+            }
 
-            Task.Run(LoadSettings).Wait();      // Load DaemonPath, AppDataDir, and ConfigFilePath from App.config
-            DaemonProcess = new StartDaemon(settings, wallet);
 
-            Task.Run(InitDaemon).Wait();        // Validate Directories and Files for Daemon Launch
+            DaemonProcess = new StartDaemon(settings(walletName), wallet);
+
+            InitDaemon(settings(walletName)).Wait();        // Validate Directories and Files for Daemon Launch
         }
+
+        public Settings settings(string walletName) => wallets?.Where(w => w.WalletName == walletName).FirstOrDefault();
 
         private static void SetupStaticLogger()
         {
@@ -59,20 +74,7 @@ namespace IOCoin.Headless
         }
 
 
-        public async Task LoadSettings()
-        {
-            settings.daemonPath = settings.ReadSetting("daemonpath");
-            settings.appDataDir = settings.ReadSetting("appdatadir");
-            settings.configFilepath = settings.ReadSetting("configfilepath");
-            settings.walletPasshrase = settings.ReadSetting("walletpassphrase");
-            settings.notificationAddress = settings.ReadSetting("notificationaddress");
-
-            settings.addNodes = settings.ReadSetting("addnodes").Split(",").ToArray();
-
-            daemonHelpers = new DaemonHelpers(settings.appDataDir);
-        }
-
-        public async Task InitDaemon()
+        public async Task InitDaemon(Settings settings)
         {
 
             // Ensure datadir format has ending slash
