@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class GetAccountAddress : ProcessBase<string>
     {
-        public GetAccountAddress(Settings settings, IWallet wallet) : base(settings, wallet)
+        public GetAccountAddress(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

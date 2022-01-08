@@ -11,7 +11,7 @@ namespace IOCoin.Headless.Processes
 {
     public class StartDaemon : ProcessBase<bool>
     {
-        public StartDaemon(Settings settings, IWallet wallet) : base(settings, wallet)
+        public StartDaemon(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }
@@ -24,7 +24,7 @@ namespace IOCoin.Headless.Processes
         public async Task<StartDaemon> Run(bool createFiles = false)
         {
             string args = settings.daemonArgBase;
-            args += createFiles ? "" : "-blocknotify=\"curl http://localhost:8000/notify/block?trx=%s\" -walletnotify=\"curl http://localhost:8000/notify/wallet?trx=%s\" -daemon";
+            args += createFiles ? "" : "-blocknotify=\"curl http://localhost:8000/notify/block?trx=%s\" -walletnotify=\"curl http://localhost:8000/notify/wallet?trx=%s\"";
 
             var startInfo = new ProcessStartInfo();
             startInfo.UseShellExecute = false;

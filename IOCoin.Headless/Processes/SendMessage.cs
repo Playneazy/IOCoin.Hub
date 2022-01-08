@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class SendMessage : ProcessBase<string>
     {
-        public SendMessage(Settings settings, IWallet wallet) : base(settings, wallet)
+        public SendMessage(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

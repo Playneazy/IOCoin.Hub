@@ -15,7 +15,7 @@ namespace IOCoin.Headless.Processes
 {
     public class GetNumBlocksOfPeers : ProcessBase<int>
     {
-        public GetNumBlocksOfPeers(Settings settings, IWallet wallet) : base(settings, wallet)
+        public GetNumBlocksOfPeers(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

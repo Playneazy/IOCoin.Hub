@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class UpdateEncryptedAliasValue : ProcessBase<string>
     {
-        public UpdateEncryptedAliasValue(Settings settings, IWallet wallet) : base(settings, wallet)
+        public UpdateEncryptedAliasValue(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class SendToShade : ProcessBase<ShadeSendResponse>
     {
-        public SendToShade(Settings settings, IWallet wallet) : base(settings, wallet)
+        public SendToShade(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

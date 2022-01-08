@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class NodeValidate : ProcessBase<List<AliasResponse>>
     {
-        public NodeValidate(Settings settings, IWallet wallet) : base(settings, wallet)
+        public NodeValidate(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

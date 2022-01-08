@@ -15,7 +15,7 @@ namespace IOCoin.Headless.Processes
 {
     public class ListTransactions : ProcessBase<List<ListTransactionsResponse>>
     {
-        public ListTransactions(Settings settings, IWallet wallet) : base(settings, wallet)
+        public ListTransactions(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }
@@ -33,10 +33,11 @@ namespace IOCoin.Headless.Processes
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardInput = true;
             await StartProcess(true, startInfo);
 
             // Create the Rpc.Result
-            if (Rpc.ExitCode != 0)
+            if (Rpc.ExitCode != 0 || string.IsNullOrEmpty(Rpc.OutputMsg))
             {
                 await HandleResult(null, startInfo);
                 return this;

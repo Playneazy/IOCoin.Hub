@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class SendToDion : ProcessBase<string>
     {
-        public SendToDion(Settings settings, IWallet wallet) : base(settings, wallet)
+        public SendToDion(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using IOCoin.Wallet;
 using IOCoin.Headless.Events;
 using System.IO;
+using Serilog;
 
 namespace IOCoin.Console
 {
@@ -44,7 +45,7 @@ namespace IOCoin.Console
                 // Calls to Processes
                 if (command.StartsWith("-"))
                 {
-                    command = cmd.Substring(1);
+                    command = command.Substring(1);
                     
   
                     switch (command)
@@ -98,29 +99,36 @@ namespace IOCoin.Console
                             }
                             break;
                         case "loadwallet":
+
                             walletName = cmdArgs?.ElementAt(1);
-                            if (!string.IsNullOrEmpty(walletName))
+                            //if (!string.IsNullOrEmpty(walletName))
+                            //{
+                            // 1.) Initialize Daemon and Console settings
+                            ConsoleWriter.Info($"Initializing daemon and files...");
+                            Daemon = new Daemon(wallet, walletName);
+                            if (Daemon.wallets.walletconfigs == null)
                             {
-                                // 1.) Initialize Daemon and Console settings
-                                ConsoleWriter.Info($"Initializing daemon and files...");
-                                Daemon = new Daemon(wallet, walletName);
-
-                                settings = await Daemon?.LoadSettings<Settings>(Directory.GetCurrentDirectory() + "\\Console.json");
-
-                                // 2.) Setup webserver for Block and Wallet Notifications from Daemon
-                                WebServer ws = new WebServer(Daemon.settings(walletName));
-                                ws.BlockNotification += c_BlockNotification;
-                                ws.WalletNotification += c_WalletNotification;
-
-                                // 3.) Start Update Timer
-                                TimedUpdates.Start(settings, wallet, Daemon, walletName);
-
-                                ConsoleWriter.Response($"Daemon initialized.");
-
-                                // 4.) Initalize the wallet
-                                await new InitWallet().Run(Daemon, wallet, walletName);
-
+                                Log.Error($"Could not find a [{walletName}] wallet config.");
+                                break;
                             }
+                            walletName = Daemon.wallets.lastusedwallet;     // Reset the wallet name from the Daemon as lastusedwallet from settings could be used if no walletname is provided.
+
+                            settings = await Daemon?.LoadSettings<Settings>(Directory.GetCurrentDirectory() + "\\Console.json");
+
+                            // 2.) Setup webserver for Block and Wallet Notifications from Daemon
+                            WebServer ws = new WebServer(Daemon.settings(walletName));
+                            ws.BlockNotification += c_BlockNotification;
+                            ws.WalletNotification += c_WalletNotification;
+
+                            // 3.) Start Update Timer
+                            TimedUpdates.Start(settings, wallet, Daemon, walletName);
+
+                            ConsoleWriter.Response($"Daemon initialized.");
+
+                            // 4.) Initalize the wallet
+                            await new InitWallet().Run(Daemon, wallet, walletName);
+
+                            //}
                             break;
 
                         default:
@@ -157,7 +165,7 @@ namespace IOCoin.Console
         private static void c_BlockNotification(object sender, NotificationEventArgs e)
         {
             // e.Tx is a Blockhash
-            ConsoleWriter.Notification($"Block Notification: {e.Tx}");
+            //-regiConsoleWriter.Notification($"Block Notification: {e.Tx}");
         }
 
 

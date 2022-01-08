@@ -42,7 +42,7 @@ namespace IOCoin.Console.Functions.Wallet
                 await WriteConfigFile(); // Save a default iocoin.conf file with nodes
             }
 
-            Daemon.settings(walletName).daemonArgBase = "-datadir=" + dh.FormatDirPath() + " -rpcuser=" + Daemon.settings(walletName).rpcUser + " -rpcpassword=" + Daemon.settings(walletName).rpcPassword + " ";
+            Daemon.settings(walletName).daemonArgBase = "-datadir=" + dh.FormatDirPath() + " -rpcuser=\"" + Daemon.settings(walletName).rpcUser + "\" -rpcpassword=\"" + Daemon.settings(walletName).rpcPassword + "\" ";
 
 
             await daemon.DaemonProcess.Run();

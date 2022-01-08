@@ -15,7 +15,7 @@ namespace IOCoin.Headless.Processes
 {
     public class GetStakingInfo : ProcessBase<GetStakingInfoResponse>
     {
-        public GetStakingInfo(Settings settings, IWallet wallet) : base(settings, wallet)
+        public GetStakingInfo(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

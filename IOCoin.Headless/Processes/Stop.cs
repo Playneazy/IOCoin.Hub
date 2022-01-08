@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class Stop : ProcessBase<bool>
     {
-        public Stop(Settings settings, IWallet wallet) : base(settings, wallet)
+        public Stop(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

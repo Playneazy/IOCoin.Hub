@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class CustomCommand : ProcessBase<bool>
     {
-        public CustomCommand(Settings settings, IWallet wallet) : base(settings, wallet)
+        public CustomCommand(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

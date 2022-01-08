@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class DecryptAlias : ProcessBase<string>
     {
-        public DecryptAlias(Settings settings, IWallet wallet) : base(settings, wallet)
+        public DecryptAlias(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

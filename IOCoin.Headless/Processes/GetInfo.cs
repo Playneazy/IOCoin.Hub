@@ -15,7 +15,7 @@ namespace IOCoin.Headless.Processes
 {
     public class GetInfo : ProcessBase<GetInfoResponse>
     {
-        public GetInfo(Settings settings, IWallet wallet) : base(settings, wallet)
+        public GetInfo(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

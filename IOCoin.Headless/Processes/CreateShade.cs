@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class CreateShade : ProcessBase<ShadeResponse>
     {
-        public CreateShade(Settings settings, IWallet wallet) : base(settings, wallet)
+        public CreateShade(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

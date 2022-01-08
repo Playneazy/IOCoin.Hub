@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IOCoin.Headless.Processes
@@ -32,12 +33,12 @@ namespace IOCoin.Headless.Processes
         public delegate void ResultEventHandler(object sender, ResultEventArgs<ResponseType> e);
         public event ResultEventHandler Result;
 
-        public Settings settings { get; set; }
+        public WalletConfig settings { get; set; }
 
         
 
 
-        public ProcessBase(Settings Settings, IWallet wallet)
+        public ProcessBase(WalletConfig Settings, IWallet wallet)
         {
             settings = Settings;
             Wallet = wallet;
@@ -46,63 +47,105 @@ namespace IOCoin.Headless.Processes
 
         public async Task StartProcess(bool waitForExit, ProcessStartInfo startInfo)
         {
-            Process process = new Process();
-
-            process.StartInfo = startInfo;
-            process.StartInfo.FileName = settings.daemonPath;
-            process.Start();
-
-            // Check Timeout while we wait for process to complete
-            int timeoutCount = 0;
-            bool isTimedOut = false;
-            if (waitForExit)
+            using (Process process = new Process())
             {
-                do
-                {
-                    await Task.Delay(1000);
-                    timeoutCount += 1;
-                    
-                    //Log.Debug($"Timing out in [{TimeoutSec - timeoutCount}] seconds...");
+                process.StartInfo = startInfo;
+                process.StartInfo.FileName = settings.daemonPath;
 
-                    if (timeoutCount >= TimeoutSec)
+
+                StringBuilder output = new StringBuilder();
+                StringBuilder error = new StringBuilder();
+
+                // Read the results asynchronously
+                using (AutoResetEvent outputWaitHandle = new AutoResetEvent(false))
+                using (AutoResetEvent errorWaitHandle = new AutoResetEvent(false))
+                {
+                    process.OutputDataReceived += (sender, e) =>
                     {
-                        isTimedOut = true;
+                        if (e.Data == null)
+                        {
+                            outputWaitHandle.Set();
+                        }
+                        else
+                        {
+                            output.AppendLine(e.Data);
+                        }
+                    };
+                    process.ErrorDataReceived += (sender, e) =>
+                    {
+                        if (e.Data == null)
+                        {
+                            errorWaitHandle.Set();
+                        }
+                        else
+                        {
+                            error.AppendLine(e.Data);
+                        }
+                    };
+
+
+
+                    process.Start();
+
+                    if (process.StartInfo.RedirectStandardError && process.StartInfo.RedirectStandardOutput)
+                    {
+                        process.BeginErrorReadLine();
+                        process.BeginOutputReadLine();
+                    }
+
+
+
+                    if (waitForExit && process.WaitForExit(TimeoutSec * 1000) &&
+                        outputWaitHandle.WaitOne(TimeoutSec * 1000) &&
+                        errorWaitHandle.WaitOne(TimeoutSec * 1000))
+                    {
+                        // Process Complete
+
+                        TimedOut = false;
+                    }
+                    else
+                    {
+                        // Timed out
+                        TimedOut = true;
                         try
                         {
-                            process.Close();
-                            process.Kill();
+                            //process.Close();
+                            //process.Kill();
                         }
                         catch (Exception ex)
                         {
                             Log.Error($"Timed out on Arguements: {startInfo.Arguments}");
                         }
-                        break;
+
                     }
-                } while (!process.HasExited);
+
+
+                }
+
+
+
+
+
+
+                if (!TimedOut && process.StartInfo.RedirectStandardError && process.StartInfo.RedirectStandardOutput)
+                {
+                    Rpc.ErrorMsg = error.ToString();
+                    Rpc.OutputMsg = output.ToString();
+                }
+
+                if (!TimedOut && process.HasExited)
+                    Rpc.ExitCode = process.ExitCode;
+                else
+                    Rpc.ExitCode = -1;
+
+                if (!string.IsNullOrEmpty(Rpc.ErrorMsg)) Log.Error(Rpc.ErrorMsg);
+
+
+                
             }
-
-            if (!isTimedOut && process.StartInfo.RedirectStandardError && process.StartInfo.RedirectStandardOutput)
-            {
-                Rpc.ErrorMsg = process.StandardError?.ReadToEnd();
-                Rpc.OutputMsg = process.StandardOutput?.ReadToEnd();
-            }
-
-            if (!isTimedOut && process.HasExited)
-                Rpc.ExitCode = process.ExitCode;
-            else
-                Rpc.ExitCode = -1;
-
-            if (!string.IsNullOrEmpty(Rpc.ErrorMsg)) Log.Error(Rpc.ErrorMsg);
-
-            if (timeoutCount >= TimeoutSec)
-                TimedOut = true;
-            else
-                TimedOut = false;
-
-            process.Close();
-
             return;
         }
+
 
         protected virtual void OnResult(ResultEventArgs<ResponseType> e)
         {

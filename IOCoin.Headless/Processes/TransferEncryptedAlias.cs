@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class TransferEncryptedAlias : ProcessBase<string>
     {
-        public TransferEncryptedAlias(Settings settings, IWallet wallet) : base(settings, wallet)
+        public TransferEncryptedAlias(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

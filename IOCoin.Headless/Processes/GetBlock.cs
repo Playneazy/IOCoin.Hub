@@ -15,7 +15,7 @@ namespace IOCoin.Headless.Processes
 {
     public class GetBlock : ProcessBase<GetBlockResponse>
     {
-        public GetBlock(Settings settings, IWallet wallet) : base(settings, wallet)
+        public GetBlock(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

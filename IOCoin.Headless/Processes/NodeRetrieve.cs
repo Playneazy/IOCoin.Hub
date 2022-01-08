@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class NodeRetrieve : ProcessBase<List<AliasResponse>>
     {
-        public NodeRetrieve(Settings settings, IWallet wallet) : base(settings, wallet)
+        public NodeRetrieve(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

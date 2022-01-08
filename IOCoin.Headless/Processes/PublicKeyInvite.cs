@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class PublicKeyInvite : ProcessBase<string>
     {
-        public PublicKeyInvite(Settings settings, IWallet wallet) : base(settings, wallet)
+        public PublicKeyInvite(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class WalletPassPhrase : ProcessBase<bool>
     {
-        public WalletPassPhrase(Settings settings, IWallet wallet) : base(settings, wallet)
+        public WalletPassPhrase(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }
@@ -26,7 +26,7 @@ namespace IOCoin.Headless.Processes
 
         public async Task<WalletPassPhrase> Run(long secondsInMem, bool stake = false)
         {
-            string args = $"{settings.walletPasshrase} {secondsInMem} {stake.ToString().ToLower()}";
+            string args = $"{settings.walletPassphrase} {secondsInMem} {stake.ToString().ToLower()}";
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.Arguments = settings.daemonArgBase + "walletpassphrase " + args;

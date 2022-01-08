@@ -15,7 +15,7 @@ namespace IOCoin.Headless.Processes
 {
     public class EncryptWallet : ProcessBase<bool>
     {
-        public EncryptWallet(Settings settings, IWallet wallet) : base(settings, wallet)
+        public EncryptWallet(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }
@@ -27,7 +27,7 @@ namespace IOCoin.Headless.Processes
 
         public async Task<EncryptWallet> Run()
         {
-            string args = $"{settings.walletPasshrase}";
+            string args = $"{settings.walletPassphrase}";
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.Arguments = settings.daemonArgBase + "encryptwallet " + args;

@@ -25,10 +25,9 @@ namespace IOCoin.Headless
     public class Daemon
     {
 
-
         public DaemonHelpers daemonHelpers { get; set; }
 
-        public List<Settings> wallets { get; set; } = new List<Settings>();
+        public Settings wallets { get; set; } = new Settings();
 
         private Settings setting { get; set; } 
 
@@ -49,24 +48,37 @@ namespace IOCoin.Headless
                 return;
             }
             try
-            {
-                var fullConfig = File.ReadAllText(WalletsPath).Replace(@"\", @"\\");
-            
-                wallets = JsonConvert.DeserializeObject<List<Settings>>(fullConfig);
+            {            
+                wallets = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(WalletsPath));
             }
             catch (Exception ex)
             {
                 Log.Error("Error Loading Wallets: " + ex.Message);
             }
 
-            daemonHelpers = new DaemonHelpers(settings(walletName).appDataDir);
+            
+            if (string.IsNullOrEmpty(walletName) && !string.IsNullOrEmpty(wallets.lastusedwallet))
+            {
+                walletName = wallets.lastusedwallet;        // Loads the last used wallet if one is there and no wallet was fed into the daemon.
+            }
 
-            DaemonProcess = new StartDaemon(settings(walletName), wallet);
 
-            InitDaemon(settings(walletName)).Wait();        // Validate Directories and Files for Daemon Launch
+            wallets.lastusedwallet = walletName;
+
+            SaveSettings().Wait();
+
+            if (!string.IsNullOrEmpty(walletName))
+            {
+                daemonHelpers = new DaemonHelpers(settings(walletName).appDataDir);
+
+                DaemonProcess = new StartDaemon(settings(walletName), wallet);
+
+                InitDaemon(settings(walletName)).Wait();        // Validate Directories and Files for Daemon Launch
+            }
+                
         }
 
-        public Settings settings(string walletName) => wallets?.Where(w => w.WalletName == walletName).FirstOrDefault();
+        public WalletConfig settings(string walletName) => wallets?.walletconfigs.Where(w => w.WalletName == walletName).FirstOrDefault();
 
         private static void SetupStaticLogger()
         {
@@ -105,7 +117,7 @@ namespace IOCoin.Headless
             }
         }
 
-        public async Task InitDaemon(Settings settings)
+        public async Task InitDaemon(WalletConfig settings)
         {
 
             // Ensure datadir format has ending slash

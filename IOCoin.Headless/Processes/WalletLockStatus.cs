@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class WalletLockStatus : ProcessBase<WalletLockStatusResponse>
     {
-        public WalletLockStatus(Settings settings, IWallet wallet) : base(settings, wallet)
+        public WalletLockStatus(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

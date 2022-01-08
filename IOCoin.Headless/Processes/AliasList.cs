@@ -15,7 +15,7 @@ namespace IOCoin.Headless.Processes
 {
     public class AliasList : ProcessBase<List<AliasResponse>>
     {
-        public AliasList(Settings settings, IWallet wallet) : base(settings, wallet)
+        public AliasList(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

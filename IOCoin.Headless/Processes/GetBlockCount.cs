@@ -15,7 +15,7 @@ namespace IOCoin.Headless.Processes
 {
     public class GetBlockCount : ProcessBase<int>
     {
-        public GetBlockCount(Settings settings, IWallet wallet) : base(settings, wallet)
+        public GetBlockCount(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

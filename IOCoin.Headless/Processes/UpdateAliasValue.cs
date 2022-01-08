@@ -14,7 +14,7 @@ namespace IOCoin.Headless.Processes
 {
     public class UpdateAliasValue : ProcessBase<string>
     {
-        public UpdateAliasValue(Settings settings, IWallet wallet) : base(settings, wallet)
+        public UpdateAliasValue(WalletConfig settings, IWallet wallet) : base(settings, wallet)
         {
 
         }

@@ -50,7 +50,7 @@ namespace IOCoin.Console
             var runtimeSecToMin = Math.Round((Double)runtime_timerTicks / 60, 2);
             var updateSecToMin = Math.Round((Double)update_timerTicks / 60, 2);
 
-            if (updateSecToMin >= settings.updateintervalMin && !ProcessingUpdate)
+            if (updateSecToMin >= settings.updateintervalMin && !ProcessingUpdate && wallet.isSynced)
             {
                 ProcessingUpdate = true;        // Makes sure another thread at a new tick doesn't execute while processing.
 
@@ -63,6 +63,7 @@ namespace IOCoin.Console
                 _ = await new AliasList(Daemon.settings(walletName), wallet).Run();
 
                 // Output update
+                ConsoleWriter.Update($"{DateTime.Now})");
                 ConsoleWriter.Update($"Versioning: {wallet.Version} [{wallet.ProtocolVersion}] ({wallet.WalletVersion})");
                 ConsoleWriter.Update($"Online: {wallet.isOnline}, IP: [{wallet.IP}]");
                 ConsoleWriter.Update($"Synced: {wallet.isOnline}");

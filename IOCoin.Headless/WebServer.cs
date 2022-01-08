@@ -20,7 +20,7 @@ namespace IOCoin.Headless
         public event NotificationEventHandler WalletNotification;
 
         public static HttpListener listener;
-        public WebServer(Settings settings)
+        public WebServer(WalletConfig settings)
         {
 
             BackgroundWorker bw = new BackgroundWorker();
