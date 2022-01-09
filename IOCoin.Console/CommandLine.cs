@@ -50,11 +50,18 @@ namespace IOCoin.Console
   
                     switch (command)
                     {
+                        case "gettransaction":
+                            var txid = cmdArgs?.ElementAtOrDefault(1);
+                            if (!string.IsNullOrEmpty(txid))
+                            {
+                                var aliasHash = await new GetTransaction(Daemon.settings(walletName), wallet).Run(txid);
+                            }
+                            break;
                         case "registeralias":
                             var alias = cmdArgs?.ElementAtOrDefault(1);
                             if (!string.IsNullOrEmpty(alias))
                             {
-                                var aliasHash = await new RegisterAlias(Daemon.settings(walletName), wallet).Run(cmdArgs.ElementAtOrDefault(1));
+                                var aliasHash = await new RegisterAlias(Daemon.settings(walletName), wallet).Run(alias);
                                 await new AliasList(Daemon.settings(walletName), wallet).Run();
                             }
                                 

@@ -20,10 +20,11 @@ namespace IOCoin.Console
         static Settings settings { get; set; } = new Settings();
         static Info Wallet { get; set; } = new Info();
 
-        //TODO: Enable logging by running file
+        
+        // TODO: Write a global error handling event for Headless
         static async Task Main(string[] args)
         {          
-            //TODO: Put Try Catch blocks around file handling
+            //TODO: Put Try Catch blocks around file handling and test for issues in various scenarios
             //############################
             // 4.) Listen for commands ###
             //############################
@@ -31,12 +32,6 @@ namespace IOCoin.Console
 
         }
 
-        private static void LoadSettings()
-        {
-            // This uses the Settings class from the IOCoin.Headless project to read/write into 'Headless.Config'
-            //settings.updateintervalMin = Int32.Parse(Daemon.settings(walletName).ReadSetting("updateintervalMin"));
-            //if (settings.updateintervalMin == 0) settings.updateintervalMin = 20;       // Default of 20 minute updates
-        }
 
 
 
