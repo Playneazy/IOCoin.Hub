@@ -76,35 +76,40 @@ You can setup the initialization parameters for multiple wallets. Each are refer
 > 
 > loadwallet [configname]
 
+After the first run you can run 'loadwallet' without a [configname] and the Last Used wallet name will be used instead.
+
 ```json
-[
-  {
-    "configname": "testwallet",
-    "daemonpath": "C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe",
-    "appdatadir": "C:\Users\k\Documents\IOC\IOC_Test_Wallet",
-    "configfilepath": "C:\Users\k\Documents\IOC\IOC_Test_Wallet\iocoin.conf",
-    "walletpassphrase": "passphrase1",
-    "notificationaddress": "http://localhost:8000/",
-    "initnodes": [
-      "amer.supernode.iocoin.io",
-      "emea.supernode.iocoin.io",
-      "apac.supernode.iocoin.io"
-     ]
-  },
-  {
-    "configname": "main",
-    "daemonpath": "C:\Users\k\Documents\IOC\IOC_Daemon\iocoind.exe",
-    "appdatadir": "C:\Users\k\Documents\IOC\IOC",
-    "configfilepath": "C:\Users\k\Documents\IOC\IOC\iocoin.conf",
-    "walletpassphrase": "passphrase2",
-    "notificationaddress": "http://localhost:8000/",
-    "initnodes": [
-      "amer.supernode.iocoin.io",
-      "emea.supernode.iocoin.io",
-      "apac.supernode.iocoin.io"
-     ]
-  }
-]
+{
+  "lastusedwallet": "testwallet",
+  "walletconfigs": [
+    {
+      "configname": "testwallet",
+      "daemonPath": "C:\\Users\\k\\Documents\\IOC\\IOC_Daemon\\iocoind.exe",
+      "appDataDir": "C:\\Users\\k\\Documents\\IOC\\IOC_Test_Wallet",
+      "configFilepath": "C:\\Users\\k\\Documents\\IOC\\IOC_Test_Wallet\\iocoin.conf",
+      "walletPassphrase": "passphrase",
+      "notificationAddress": "http://localhost:8000/",
+      "initnodes": [
+        "amer.supernode.iocoin.io",
+        "emea.supernode.iocoin.io",
+        "apac.supernode.iocoin.io"
+      ]
+    },
+    {
+      "configname": "main",
+      "daemonPath": "C:\\Users\\k\\Documents\\IOC\\IOC_Daemon\\iocoind.exe",
+      "appDataDir": "C:\\Users\\k\\Documents\\IOC\\IOC",
+      "configFilepath": "C:\\Users\\k\\Documents\\IOC\\IOC\\iocoin.conf",
+      "walletPassphrase": "passphrase",
+      "notificationAddress": "http://localhost:8000/",
+      "initnodes": [
+        "amer.supernode.iocoin.io",
+        "emea.supernode.iocoin.io",
+        "apac.supernode.iocoin.io"
+      ]
+    }
+  ]
+}
 ```
 
 ### Creating a new Daemon Process:
